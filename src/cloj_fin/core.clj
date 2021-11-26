@@ -20,6 +20,7 @@
                   "")]
     (format "https://finance.yahoo.com/quote/%s%s?p=%s" ticker tab-end ticker)))
 
+
 ; parse the different data tabs on yahoo finance
 ; we will have an individual function for each of the different tabs since
 ; they will all have different data structures to them
@@ -28,8 +29,6 @@
 
 
 ; pulls everything togther into a single function
-
-
 (defn yahoo-fin-data [ticker tab]
   "creates the url, pulls the data, and parses the data from yahoo finance"
   (let [url (yahoo-fin-url "AAPL" "stats")]
