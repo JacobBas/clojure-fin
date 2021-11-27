@@ -9,7 +9,6 @@
 ; it looks like we are going to have to use some java APIs to get the http requests working
 ; in the way that I want it to since I'm not sure how to write an HTTP client from scratch
 
-; create the URL
 (defn yahoo-fin-url [ticker tab]
   "creates a url endpoint for yahoo finanance given the ticker and tab"
   (let [tab-end (case tab
@@ -21,22 +20,46 @@
     (format "https://finance.yahoo.com/quote/%s%s?p=%s" ticker tab-end ticker)))
 
 
+; I want to end up doing more error handling here, but I'm not sure the best way
+; to have these errors be handled.
+(defn get-url [url]
+  "gets data from a specific url and handles any errors within the response"
+  (let [resp (client/get url)]
+    (resp)))
+
+
 ; parse the different data tabs on yahoo finance
 ; we will have an individual function for each of the different tabs since
 ; they will all have different data structures to them
-(defn yahoo-fin-parser-stats [html-string]
-  "takes in an html-string and parses the data out as clojure data structure")
+(defn yahoo-fin-parser-summary [html]
+  "takes in an html string from the yahoo finance summary tab and parses out the data"
+  (let [soup (Jsoup/parse html)
+        data (as-> soup s
+               (.getElementsByTag s "table")
+               (take 2 s)
+               (for [table s, 
+                     row (.getElementsByTag table "tr"), 
+                     data (.getElementsByTag row "td")] 
+                 (.text data))
+               (apply hash-map s))]
+    {:data data}))
+
+(defn yahoo-fin-parser-stats [html]
+  "takes in an html string from the yahoo finance stats tab and parses out the data"
+  (let [soup (Jsoup/parse html)
+        data (as-> soup s)]
+    {:data data}))
 
 
 ; pulls everything togther into a single function
 (defn yahoo-fin-data [ticker tab]
   "creates the url, pulls the data, and parses the data from yahoo finance"
-  (let [url (yahoo-fin-url "AAPL" "stats")]
-    (let [parser (case tab
-                   "stats" yahoo-fin-parser-stats)]
-      (->> (client/get url)))))
-
-
+  (let [url (yahoo-fin-url ticker tab)
+        html (get (client/get url) :body)
+        parser (case tab
+                 "stats" yahoo-fin-parser-stats
+                 yahoo-fin-parser-summary)]
+    (parser html)))
 
 
 ; I am also going to want to collect information about the company from Yahoo finance or a
@@ -51,5 +74,9 @@
 
 
 (defn -main []
-  (let [url (yahoo-fin-url "AAPL" "summary")]
-    (println url)))
+  (let [data (yahoo-fin-data "AAPL" "summary")]
+    (println (-> data (get :data))))
+  (let [data (yahoo-fin-data "AAPL" "stats")]
+    (println (-> data (get :data))))
+  )
+

@@ -1,10 +1,13 @@
 # cloj-fin
 
-A Clojure library designed to ... well, that part is up to you.
+A clojure project designed to help teach me how to use clojure as well as up my skills when
+it comes to financial and stock analysis.
 
 ## Usage
 
-FIXME
+This application should only be thought of as a proof of concept for how clojure can be used as
+a tool for financial analysis of the stock market. I am in no way liable for anything that
+happens from actually using this information.
 
 ## License
 
