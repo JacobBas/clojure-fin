@@ -27,6 +27,18 @@
   (let [resp (client/get url)]
     (resp)))
 
+; this should give me the full request that I want to yahoo finance for the historical data
+(def h {"User-Agent" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:94.0) Gecko/20100101 Firefox/94.0"
+        "Accept" "text/html"
+        "Accept-Language" "en-US,en;q=0.5"})
+
+(def qp {"period1" "1606618744"
+         "period2" "1638154744"
+         "interval" "1d"})
+
+(client/get "https://finance.yahoo.com/quote/AAPL/history" 
+            {:headers h :query-params qp})
+
 
 ; parse the different data tabs on yahoo finance
 ; we will have an individual function for each of the different tabs since
