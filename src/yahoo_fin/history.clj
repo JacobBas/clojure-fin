@@ -7,9 +7,13 @@
 ; DOCUMENTED AS BEST AS POSSIBLE
 
 (defn unix-years-from-today 
-  "calcultes the unix time stamp date n years away from current day"
+  "calculates the unix time stamp date n years away from current day"
   [years] 
-  (-> (System/currentTimeMillis) (- (* 31556952000 years)) (quot 1000)))
+  (-> (System/currentTimeMillis) 
+      (- (* 31556952000 years)) 
+      (quot 1000) 
+      (Math/floor) 
+      (int)))
 
 
 (defn req-url 
