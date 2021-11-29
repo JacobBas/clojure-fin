@@ -3,6 +3,14 @@
   (:import (org.jsoup Jsoup))
   (:require [clj-http.client :as client]))
 
+; NEED TO MAKE SURE THAT I AM USING MULTILINE DOC STRINGS WITHIN FUNCTIONS SP THAT THEY ARE
+; DOCUMENTED AS BEST AS POSSIBLE
+
+(defn unix-years-from-today 
+  "calcultes the unix time stamp date n years away from current day"
+  [years] 
+  (quot (- (System/currentTimeMillis) (* 31556952000 years)) 1000) 
+
 
 (defn req-url 
   "returns the request url given a valid url ticker value"
@@ -21,8 +29,8 @@
              "Cache-Control" "no-cache"}
    ; for the time range we are only looking a max of 5 years back since anything 
    ; further is probably not needed for our given use case
-   :query-params {"period1"(quot (- (System/currentTimeMillis) (* 31556952000 5)) 1000) 
-                  "period2" (quot (System/currentTimeMillis) 1000)
+   :query-params {"period1"(unix-years-from-today 5) 
+                  "period2" (unix-years-from-today 0)
                   "interval" "1d"} 
    ; the below two lines are needed since we don't care about cookies with
    ; this specific implementation
